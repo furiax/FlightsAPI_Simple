@@ -24,8 +24,8 @@ namespace FlightsAPI_Simple.Services
             {
                 return null;
             }
-            _dbContext.Remove(savedFlight);
-
+            _dbContext.Flights.Remove(savedFlight);
+            _dbContext.SaveChanges();
             return $"Successfully deleted flight with id: {id}";
         }
 
@@ -36,12 +36,17 @@ namespace FlightsAPI_Simple.Services
 
         public Flight? GetFlightById(int id)
         {
-            return _dbContext.Flights.Find(id);
+            var result = _dbContext.Flights.Find(id);
+            if (result is null)
+            {
+                return null;
+            }             
+            return result;
         }
 
         public Flight? UpdateFlight(int id, Flight updatedFlight)
         {
-            Flight savedFlight = _dbContext.Flights.Find(id);
+            Flight? savedFlight = _dbContext.Flights.Find(id);
             
             if (savedFlight is null) {
                 return null;

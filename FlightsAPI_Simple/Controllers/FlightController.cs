@@ -8,7 +8,7 @@ namespace FlightsAPI_Simple.Controllers
     [Route("api/[controller]")]
     public class FlightController : ControllerBase
     {
-        private readonly FlightService _flightService;
+        private readonly IFlightService _flightService;
         public FlightController(IFlightService flightService)
         {
             _flightService = flightService;
@@ -23,7 +23,13 @@ namespace FlightsAPI_Simple.Controllers
         [HttpGet("{id}")]
         public ActionResult<Flight> GetFlightById(int id)
         {
-            return Ok(_flightService.GetFlightById(id));
+            var result = _flightService.GetFlightById(id);
+            if (result is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
         }
 
         [HttpPost]
@@ -35,13 +41,25 @@ namespace FlightsAPI_Simple.Controllers
         [HttpPut("{id}")]
         public ActionResult<Flight> UpdateFlight(int id, Flight updatedFlight)
         {
-            return Ok(_flightService.UpdateFlight(id, updatedFlight));
+            var result = _flightService.UpdateFlight(id, updatedFlight);
+            if (result is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public ActionResult<string> DeleteFlight(int id)
         {
-            return Ok(_flightService.DeleteFlight(id));
+            var result = _flightService.DeleteFlight(id);
+
+            if(result is null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
     }
 }
