@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FlightsAPI_Simple.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlightsAPI_Simple.Data
 {
@@ -8,5 +9,7 @@ namespace FlightsAPI_Simple.Data
         {
                 
         }
+
+        public DbSet<Flight> Flights { get; set; }
     }
 }
