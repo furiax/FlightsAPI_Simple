@@ -15,15 +15,15 @@ namespace FlightsAPI_Simple.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Flight>> GetAllFLights()
+        public async Task<ActionResult<List<Flight>>> GetAllFLights()
         {
             return Ok(_flightService.GetAllFlights());
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Flight> GetFlightById(int id)
+        public async Task <ActionResult<Flight>> GetFlightById(int id)
         {
-            var result = _flightService.GetFlightById(id);
+            var result = await _flightService.GetFlightById(id);
             if (result is null)
             {
                 return NotFound();
@@ -33,15 +33,16 @@ namespace FlightsAPI_Simple.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Flight> CreateFlight(Flight flight) 
+        public async Task<ActionResult<Flight>> CreateFlight(Flight flight) 
         {
-            return Ok(_flightService.CreateFlight(flight));
+            var createdFlight = await _flightService.CreateFlight(flight);
+            return new ObjectResult(createdFlight) { StatusCode = 201 };
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Flight> UpdateFlight(int id, Flight updatedFlight)
+        public async Task<ActionResult<Flight>> UpdateFlight(int id, Flight updatedFlight)
         {
-            var result = _flightService.UpdateFlight(id, updatedFlight);
+            var result = await _flightService.UpdateFlight(id, updatedFlight);
             if (result is null)
             {
                 return NotFound();
@@ -51,15 +52,15 @@ namespace FlightsAPI_Simple.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<string> DeleteFlight(int id)
+        public async Task <ActionResult<string>> DeleteFlight(int id)
         {
-            var result = _flightService.DeleteFlight(id);
+            var result = await _flightService.DeleteFlight(id);
 
             if(result is null)
             {
                 return NotFound();
             }
-            return Ok(result);
+            return new ObjectResult(result) { StatusCode = 204 };
         }
     }
 }
