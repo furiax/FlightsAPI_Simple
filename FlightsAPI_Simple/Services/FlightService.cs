@@ -1,5 +1,6 @@
 ﻿using FlightsAPI_Simple.Data;
 using FlightsAPI_Simple.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlightsAPI_Simple.Services
 {
@@ -10,33 +11,33 @@ namespace FlightsAPI_Simple.Services
         {
             _dbContext = dbContext;
         }
-        public Flight CreateFlight(Flight flight)
+        public async Task <Flight> CreateFlight(Flight flight)
         {
-            var savedFlight = _dbContext.Flights.Add(flight);
-            _dbContext.SaveChanges();
+            var savedFlight = await _dbContext.Flights.AddAsync(flight);
+            await _dbContext.SaveChangesAsync();
             return savedFlight.Entity;
         }
 
-        public string? DeleteFlight(int id)
+        public async Task<string?> DeleteFlight(int id)
         {
-            Flight? savedFlight = _dbContext.Flights.Find(id);
+            Flight? savedFlight = await _dbContext.Flights.FindAsync(id);
             if(savedFlight is null)
             {
                 return null;
             }
             _dbContext.Flights.Remove(savedFlight);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return $"Successfully deleted flight with id: {id}";
         }
 
-        public List<Flight> GetAllFlights()
+        public async Task<List<Flight>> GetAllFlights()
         {
-            return _dbContext.Flights.ToList();
+            return await _dbContext.Flights.ToListAsync();
         }
 
-        public Flight? GetFlightById(int id)
+        public async Task<Flight?> GetFlightById(int id)
         {
-            var result = _dbContext.Flights.Find(id);
+            var result = await _dbContext.Flights.FindAsync(id);
             if (result is null)
             {
                 return null;
@@ -44,9 +45,9 @@ namespace FlightsAPI_Simple.Services
             return result;
         }
 
-        public Flight? UpdateFlight(int id, Flight updatedFlight)
+        public async Task<Flight?> UpdateFlight(int id, Flight updatedFlight)
         {
-            Flight? savedFlight = _dbContext.Flights.Find(id);
+            Flight? savedFlight = await _dbContext.Flights.FindAsync(id);
             
             if (savedFlight is null) {
                 return null;
@@ -61,7 +62,7 @@ namespace FlightsAPI_Simple.Services
             savedFlight.ArrivalDateTime = updatedFlight.ArrivalDateTime;
             savedFlight.PassengerCapacity = updatedFlight.PassengerCapacity;
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return savedFlight;
         }

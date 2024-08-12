@@ -1,7 +1,10 @@
-﻿namespace FlightsAPI_Simple.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FlightsAPI_Simple.Models
 {
     public class Flight
     {
+        [Key]
         public int Id { get; set; }
         public int FlightNumber { get; set; }
         public string AirlineName { get; set; } = string.Empty;
