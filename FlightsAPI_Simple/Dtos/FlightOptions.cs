@@ -2,7 +2,7 @@
 
 namespace FlightsAPI_Simple.Dtos
 {
-    public class FlightFilterOptions
+    public class FlightOptions
     {
         [FromQuery(Name = "airline_name")]
         public string AirlineName { get; set; } = string.Empty;
@@ -20,5 +20,7 @@ namespace FlightsAPI_Simple.Dtos
         [FromQuery(Name = "sort_order")]
         public string SortOrder { get; set; } = "ASC";
 
+        [FromQuery(Name = "search")]
+        public string Search { get; set; } = string.Empty;
     }
 }

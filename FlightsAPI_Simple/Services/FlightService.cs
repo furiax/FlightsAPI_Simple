@@ -49,82 +49,105 @@ namespace FlightsAPI_Simple.Services
             };
         }
 
-        public async Task<ApiResponseDto<List<Flight>>> GetAllFlights(FlightFilterOptions filterOptions)
+        public async Task<ApiResponseDto<List<Flight>>> GetAllFlights(FlightOptions flightOptions)
         {
             var query = _dbContext.Flights.AsQueryable();
 
-            if(!string.IsNullOrEmpty(filterOptions.AirlineName))
+            List<Flight>? flights;
+
+            if(!string.IsNullOrEmpty(flightOptions.AirlineName))
             {
-                query = query.Where(f => f.AirlineName == filterOptions.AirlineName);
+                query = query.Where(f => f.AirlineName == flightOptions.AirlineName);
             }
 
-            if (!string.IsNullOrEmpty(filterOptions.DepartureAirportCode))
+            if (!string.IsNullOrEmpty(flightOptions.DepartureAirportCode))
             {
-                query = query.Where(f => f.DepartureAirportCode == filterOptions.DepartureAirportCode);
+                query = query.Where(f => f.DepartureAirportCode == flightOptions.DepartureAirportCode);
             }
 
-            if (!string.IsNullOrEmpty(filterOptions.ArrivalAirportCode))
+            if (!string.IsNullOrEmpty(flightOptions.ArrivalAirportCode))
             {
-                query = query.Where(f => f.ArrivalAirportCode == filterOptions.ArrivalAirportCode);
+                query = query.Where(f => f.ArrivalAirportCode == flightOptions.ArrivalAirportCode);
             }
 
-            if (filterOptions.DepartureDateTime.HasValue)
+            if (flightOptions.DepartureDateTime.HasValue)
             {
-                query = query.Where(f => f.DepartureDateTime <= filterOptions.DepartureDateTime);
+                query = query.Where(f => f.DepartureDateTime <= flightOptions.DepartureDateTime);
             }
 
-            if(filterOptions.ArrivalDateTime.HasValue)
+            if(flightOptions.ArrivalDateTime.HasValue)
             {
-                query = query.Where(f => f.ArrivalDateTime <= filterOptions.ArrivalDateTime);
+                query = query.Where(f => f.ArrivalDateTime <= flightOptions.ArrivalDateTime);
             }
 
-            if(filterOptions.SortBy == "id" || !string.IsNullOrEmpty(filterOptions.SortBy))
+            if(flightOptions.SortBy == "id" || !string.IsNullOrEmpty(flightOptions.SortBy))
             {
-                switch(filterOptions.SortBy)
+                switch(flightOptions.SortBy)
                 {
                     case "airline_name": 
-                        query = filterOptions.SortOrder.ToUpper() == "ASC" ? 
+                        query = flightOptions.SortOrder.ToUpper() == "ASC" ? 
                             query.OrderBy(f => f.AirlineName) :
                             query.OrderByDescending(f => f.AirlineName); 
                         break;
                     case "flight_number":
-                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                        query = flightOptions.SortOrder.ToUpper() == "ASC" ?
                             query.OrderBy(f => f.FlightNumber) :
                             query.OrderByDescending(f => f.FlightNumber);
                         break;
                     case "departure_airport_code":
-                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                        query = flightOptions.SortOrder.ToUpper() == "ASC" ?
                             query.OrderBy(f => f.DepartureAirportCode) :
                             query.OrderByDescending(f => f.DepartureAirportCode);
                         break;
                     case "arrival_airport_code":
-                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                        query = flightOptions.SortOrder.ToUpper() == "ASC" ?
                             query.OrderBy(f => f.ArrivalAirportCode) :
                             query.OrderByDescending(f => f.ArrivalAirportCode);
                         break;
                     case "departure_date_time":
-                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                        query = flightOptions.SortOrder.ToUpper() == "ASC" ?
                             query.OrderBy(f => f.DepartureDateTime) :
                             query.OrderByDescending(f => f.DepartureDateTime);
                         break;
                     case "arrival_date_time":
-                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                        query = flightOptions.SortOrder.ToUpper() == "ASC" ?
                             query.OrderBy(f => f.ArrivalDateTime) :
                             query.OrderByDescending(f => f.ArrivalDateTime);
                         break;
                     case "passenger_capacity":
-                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                        query = flightOptions.SortOrder.ToUpper() == "ASC" ?
                             query.OrderBy(f => f.PassengerCapacity) :
                             query.OrderByDescending(f => f.PassengerCapacity);
                         break;
                     default:
-                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                        query = flightOptions.SortOrder.ToUpper() == "ASC" ?
                             query.OrderBy(f => f.Id) :
                             query.OrderByDescending(f => f.Id);
                         break;
                 }
             }
-            var flights = await query.ToListAsync();
+
+            if(!string.IsNullOrEmpty(flightOptions.Search))
+            {
+                string searchLower = flightOptions.Search.ToLower();
+                var searchChars = searchLower.ToCharArray();
+
+                var data = await query.ToListAsync();
+                flights = data.Where(f => searchChars.All(
+                    c => f.AirlineName.ToLower().Contains(c)
+                    || f.FlightNumber.ToLower().Contains(c)
+                    || f.DepartureAirportCode.ToLower().Contains(c)
+                    || f.ArrivalAirportCode.ToLower().Contains(c)
+                    || f.DepartureDateTime.ToString("yyyy-MM-ddTHH:mm:ss").ToLower().Contains(c)
+                    || f.ArrivalDateTime.ToString("yyyy-MM-ddTHH:mm:ss").ToLower().Contains(c)
+                    || f.PassengerCapacity.ToString().ToLower().Contains(c)
+                    )).ToList();     
+            }
+            else
+            {
+                flights = await query.ToListAsync();
+            }
+            //flights = await query.ToListAsync();
 
             return new ApiResponseDto<List<Flight>>
             {
