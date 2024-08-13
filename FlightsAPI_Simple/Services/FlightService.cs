@@ -117,6 +117,11 @@ namespace FlightsAPI_Simple.Services
                             query.OrderBy(f => f.PassengerCapacity) :
                             query.OrderByDescending(f => f.PassengerCapacity);
                         break;
+                    default:
+                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                            query.OrderBy(f => f.Id) :
+                            query.OrderByDescending(f => f.Id);
+                        break;
                 }
             }
             var flights = await query.ToListAsync();
