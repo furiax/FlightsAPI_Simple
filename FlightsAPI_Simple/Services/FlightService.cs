@@ -1,4 +1,5 @@
-﻿using FlightsAPI_Simple.Data;
+﻿using AutoMapper;
+using FlightsAPI_Simple.Data;
 using FlightsAPI_Simple.Dtos;
 using FlightsAPI_Simple.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,13 +9,17 @@ namespace FlightsAPI_Simple.Services
     public class FlightService : IFlightService
     {
         private readonly FlightsDbContext _dbContext;
-        public FlightService(FlightsDbContext dbContext)
+        private readonly IMapper _mapper;
+
+        public FlightService(FlightsDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
         public async Task <Flight> CreateFlight(FlightApiRequestDto flight)
         {
-            var savedFlight = await _dbContext.Flights.AddAsync(flight);
+            Flight newFlight = _mapper.Map<Flight>(flight);
+            var savedFlight = await _dbContext.Flights.AddAsync(newFlight);
             await _dbContext.SaveChangesAsync();
             return savedFlight.Entity;
         }
@@ -54,14 +59,8 @@ namespace FlightsAPI_Simple.Services
                 return null;
             }
 
-            savedFlight.Id = updatedFlight.Id;
-            savedFlight.FlightNumber = updatedFlight.FlightNumber;
-            savedFlight.AirlineName = updatedFlight.AirlineName;
-            savedFlight.DepartureAirportCode = updatedFlight.DepartureAirportCode;
-            savedFlight.ArrivalAirportCode = updatedFlight.ArrivalAirportCode;
-            savedFlight.DepartureDateTime = updatedFlight.DepartureDateTime;
-            savedFlight.ArrivalDateTime = updatedFlight.ArrivalDateTime;
-            savedFlight.PassengerCapacity = updatedFlight.PassengerCapacity;
+            savedFlight = _mapper.Map(updatedFlight, savedFlight);
+            savedFlight.Id = id;
 
             await _dbContext.SaveChangesAsync();
 
