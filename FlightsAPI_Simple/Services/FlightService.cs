@@ -3,6 +3,7 @@ using FlightsAPI_Simple.Data;
 using FlightsAPI_Simple.Dtos;
 using FlightsAPI_Simple.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace FlightsAPI_Simple.Services
 {
@@ -16,47 +17,80 @@ namespace FlightsAPI_Simple.Services
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        public async Task <Flight> CreateFlight(FlightApiRequestDto flight)
+        public async Task <ApiResponseDto<Flight>> CreateFlight(FlightApiRequestDto flight)
         {
             Flight newFlight = _mapper.Map<Flight>(flight);
             var savedFlight = await _dbContext.Flights.AddAsync(newFlight);
             await _dbContext.SaveChangesAsync();
-            return savedFlight.Entity;
+            return new ApiResponseDto<Flight> { Data = savedFlight.Entity,
+                    ResponseCode = HttpStatusCode.Created};
         }
 
-        public async Task<string?> DeleteFlight(int id)
+        public async Task<ApiResponseDto<string?>> DeleteFlight(int id)
         {
             Flight? savedFlight = await _dbContext.Flights.FindAsync(id);
             if(savedFlight is null)
             {
-                return null;
+                return new ApiResponseDto<string?>
+                {
+                    RequestFailed = true,
+                    Data = null,
+                    ResponseCode = HttpStatusCode.NotFound,
+                    ErrorMessage = $"Resource with id {id} was not found."
+                };
             }
             _dbContext.Flights.Remove(savedFlight);
             await _dbContext.SaveChangesAsync();
-            return $"Successfully deleted flight with id: {id}";
+
+            return new ApiResponseDto<string?>
+            {
+                Data = $"Successfully deleted flight with id: {id}",
+                ResponseCode = HttpStatusCode.NoContent
+            };
         }
 
-        public async Task<List<Flight>> GetAllFlights()
+        public async Task<ApiResponseDto<List<Flight>>> GetAllFlights()
         {
-            return await _dbContext.Flights.ToListAsync();
+            var flights = await _dbContext.Flights.ToListAsync();
+            return new ApiResponseDto<List<Flight>>
+            {
+                Data = flights,
+                ResponseCode = HttpStatusCode.OK,
+            }; 
         }
 
-        public async Task<Flight?> GetFlightById(int id)
+        public async Task<ApiResponseDto<Flight?>> GetFlightById(int id)
         {
             var result = await _dbContext.Flights.FindAsync(id);
             if (result is null)
             {
-                return null;
-            }             
-            return result;
+                return new ApiResponseDto<Flight?>
+                {
+                    RequestFailed = true,
+                    Data = null,
+                    ResponseCode = HttpStatusCode.NotFound,
+                    ErrorMessage = $"Resource with id {id} was not found."
+                };
+            }
+            return new ApiResponseDto<Flight?>
+            {
+                Data = result,
+                ResponseCode = HttpStatusCode.OK,
+            };
         }
 
-        public async Task<Flight?> UpdateFlight(int id, FlightApiRequestDto updatedFlight)
+        public async Task<ApiResponseDto<Flight?>> UpdateFlight(int id, FlightApiRequestDto updatedFlight)
         {
             Flight? savedFlight = await _dbContext.Flights.FindAsync(id);
             
             if (savedFlight is null) {
-                return null;
+                return new ApiResponseDto<Flight?>
+                {
+                    RequestFailed = true,
+                    Data = null,
+                    ResponseCode = HttpStatusCode.NotFound,
+                    ErrorMessage = $"Resource with id {id} was not found."
+                };
             }
 
             savedFlight = _mapper.Map(updatedFlight, savedFlight);
@@ -64,7 +98,11 @@ namespace FlightsAPI_Simple.Services
 
             await _dbContext.SaveChangesAsync();
 
-            return savedFlight;
+            return new ApiResponseDto<Flight?>
+            {
+                Data = savedFlight,
+                ResponseCode = HttpStatusCode.OK,
+            };
         }
     }
 }
