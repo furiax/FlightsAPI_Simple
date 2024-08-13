@@ -1,4 +1,5 @@
-﻿using FlightsAPI_Simple.Models;
+﻿using FlightsAPI_Simple.Dtos;
+using FlightsAPI_Simple.Models;
 using FlightsAPI_Simple.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,14 +34,14 @@ namespace FlightsAPI_Simple.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Flight>> CreateFlight(Flight flight) 
+        public async Task<ActionResult<Flight>> CreateFlight(FlightApiRequestDto flight) 
         {
             var createdFlight = await _flightService.CreateFlight(flight);
             return new ObjectResult(createdFlight) { StatusCode = 201 };
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Flight>> UpdateFlight(int id, Flight updatedFlight)
+        public async Task<ActionResult<Flight>> UpdateFlight(int id, FlightApiRequestDto updatedFlight)
         {
             var result = await _flightService.UpdateFlight(id, updatedFlight);
             if (result is null)

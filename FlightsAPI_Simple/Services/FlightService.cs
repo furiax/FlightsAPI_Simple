@@ -1,4 +1,5 @@
 ﻿using FlightsAPI_Simple.Data;
+using FlightsAPI_Simple.Dtos;
 using FlightsAPI_Simple.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +12,7 @@ namespace FlightsAPI_Simple.Services
         {
             _dbContext = dbContext;
         }
-        public async Task <Flight> CreateFlight(Flight flight)
+        public async Task <Flight> CreateFlight(FlightApiRequestDto flight)
         {
             var savedFlight = await _dbContext.Flights.AddAsync(flight);
             await _dbContext.SaveChangesAsync();
@@ -45,7 +46,7 @@ namespace FlightsAPI_Simple.Services
             return result;
         }
 
-        public async Task<Flight?> UpdateFlight(int id, Flight updatedFlight)
+        public async Task<Flight?> UpdateFlight(int id, FlightApiRequestDto updatedFlight)
         {
             Flight? savedFlight = await _dbContext.Flights.FindAsync(id);
             
