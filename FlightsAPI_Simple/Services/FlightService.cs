@@ -78,6 +78,47 @@ namespace FlightsAPI_Simple.Services
                 query = query.Where(f => f.ArrivalDateTime <= filterOptions.ArrivalDateTime);
             }
 
+            if(filterOptions.SortBy == "id" || !string.IsNullOrEmpty(filterOptions.SortBy))
+            {
+                switch(filterOptions.SortBy)
+                {
+                    case "airline_name": 
+                        query = filterOptions.SortOrder.ToUpper() == "ASC" ? 
+                            query.OrderBy(f => f.AirlineName) :
+                            query.OrderByDescending(f => f.AirlineName); 
+                        break;
+                    case "flight_number":
+                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                            query.OrderBy(f => f.FlightNumber) :
+                            query.OrderByDescending(f => f.FlightNumber);
+                        break;
+                    case "departure_airport_code":
+                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                            query.OrderBy(f => f.DepartureAirportCode) :
+                            query.OrderByDescending(f => f.DepartureAirportCode);
+                        break;
+                    case "arrival_airport_code":
+                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                            query.OrderBy(f => f.ArrivalAirportCode) :
+                            query.OrderByDescending(f => f.ArrivalAirportCode);
+                        break;
+                    case "departure_date_time":
+                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                            query.OrderBy(f => f.DepartureDateTime) :
+                            query.OrderByDescending(f => f.DepartureDateTime);
+                        break;
+                    case "arrival_date_time":
+                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                            query.OrderBy(f => f.ArrivalDateTime) :
+                            query.OrderByDescending(f => f.ArrivalDateTime);
+                        break;
+                    case "passenger_capacity":
+                        query = filterOptions.SortOrder.ToUpper() == "ASC" ?
+                            query.OrderBy(f => f.PassengerCapacity) :
+                            query.OrderByDescending(f => f.PassengerCapacity);
+                        break;
+                }
+            }
             var flights = await query.ToListAsync();
 
             return new ApiResponseDto<List<Flight>>

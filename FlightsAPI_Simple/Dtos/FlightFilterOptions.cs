@@ -14,5 +14,11 @@ namespace FlightsAPI_Simple.Dtos
         public DateTime? DepartureDateTime { get; set; }
         [FromQuery(Name = "arrival_date_time")]
         public DateTime? ArrivalDateTime { get; set; }
+
+        [FromQuery(Name = "sort_by")]
+        public string SortBy { get; set; } = "id";
+        [FromQuery(Name = "sort_order")]
+        public string SortOrder { get; set; } = "ASC";
+
     }
 }
