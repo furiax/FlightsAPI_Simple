@@ -16,13 +16,13 @@ namespace FlightsAPI_Simple.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Flight>>> GetAllFLights()
+        public async Task<ActionResult<ApiResponseDto<List<Flight>>>> GetAllFLights()
         {
-            return Ok(_flightService.GetAllFlights());
+            return Ok(await _flightService.GetAllFlights());
         }
 
         [HttpGet("{id}")]
-        public async Task <ActionResult<Flight>> GetFlightById(int id)
+        public async Task <ActionResult<ApiResponseDto<Flight>>> GetFlightById(int id)
         {
             var result = await _flightService.GetFlightById(id);
             if (result is null)
@@ -34,14 +34,13 @@ namespace FlightsAPI_Simple.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Flight>> CreateFlight(FlightApiRequestDto flight) 
+        public async Task<ActionResult<ApiResponseDto<Flight>>> CreateFlight(FlightApiRequestDto flight) 
         {
-            var createdFlight = await _flightService.CreateFlight(flight);
-            return new ObjectResult(createdFlight) { StatusCode = 201 };
+            return new ObjectResult(await _flightService.CreateFlight(flight)) { StatusCode = 201 };
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Flight>> UpdateFlight(int id, FlightApiRequestDto updatedFlight)
+        public async Task<ActionResult<ApiResponseDto<Flight>>> UpdateFlight(int id, FlightApiRequestDto updatedFlight)
         {
             var result = await _flightService.UpdateFlight(id, updatedFlight);
             if (result is null)
@@ -53,7 +52,7 @@ namespace FlightsAPI_Simple.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task <ActionResult<string>> DeleteFlight(int id)
+        public async Task <ActionResult> DeleteFlight(int id)
         {
             var result = await _flightService.DeleteFlight(id);
 
@@ -61,7 +60,7 @@ namespace FlightsAPI_Simple.Controllers
             {
                 return NotFound();
             }
-            return new ObjectResult(result) { StatusCode = 204 };
+            return NoContent();
         }
     }
 }
