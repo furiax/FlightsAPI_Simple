@@ -36,12 +36,18 @@ namespace FlightsAPI_Simple.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponseDto<Flight>>> CreateFlight(FlightApiRequestDto flight) 
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             return new ObjectResult(await _flightService.CreateFlight(flight)) { StatusCode = 201 };
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponseDto<Flight>>> UpdateFlight(int id, FlightApiRequestDto updatedFlight)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _flightService.UpdateFlight(id, updatedFlight);
             if (result is null)
             {
