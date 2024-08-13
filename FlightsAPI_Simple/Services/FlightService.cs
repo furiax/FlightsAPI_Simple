@@ -49,9 +49,37 @@ namespace FlightsAPI_Simple.Services
             };
         }
 
-        public async Task<ApiResponseDto<List<Flight>>> GetAllFlights()
+        public async Task<ApiResponseDto<List<Flight>>> GetAllFlights(FlightFilterOptions filterOptions)
         {
-            var flights = await _dbContext.Flights.ToListAsync();
+            var query = _dbContext.Flights.AsQueryable();
+
+            if(!string.IsNullOrEmpty(filterOptions.AirlineName))
+            {
+                query = query.Where(f => f.AirlineName == filterOptions.AirlineName);
+            }
+
+            if (!string.IsNullOrEmpty(filterOptions.DepartureAirportCode))
+            {
+                query = query.Where(f => f.DepartureAirportCode == filterOptions.DepartureAirportCode);
+            }
+
+            if (!string.IsNullOrEmpty(filterOptions.ArrivalAirportCode))
+            {
+                query = query.Where(f => f.ArrivalAirportCode == filterOptions.ArrivalAirportCode);
+            }
+
+            if (filterOptions.DepartureDateTime.HasValue)
+            {
+                query = query.Where(f => f.DepartureDateTime <= filterOptions.DepartureDateTime);
+            }
+
+            if(filterOptions.ArrivalDateTime.HasValue)
+            {
+                query = query.Where(f => f.ArrivalDateTime <= filterOptions.ArrivalDateTime);
+            }
+
+            var flights = await query.ToListAsync();
+
             return new ApiResponseDto<List<Flight>>
             {
                 Data = flights,

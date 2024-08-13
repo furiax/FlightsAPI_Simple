@@ -11,8 +11,8 @@ namespace FlightsAPI_Simple.Dtos
         [FromQuery(Name = "arrival_airport_code")]
         public string ArrivalAirportCode { get; set; } = string.Empty;
         [FromQuery(Name = "departure_date_time")]
-        public DateTime DepartureDateTime { get; set; }
+        public DateTime? DepartureDateTime { get; set; }
         [FromQuery(Name = "arrival_date_time")]
-        public DateTime ArrivalDateTime { get; set; }
+        public DateTime? ArrivalDateTime { get; set; }
     }
 }

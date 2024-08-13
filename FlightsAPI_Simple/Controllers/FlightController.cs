@@ -16,9 +16,9 @@ namespace FlightsAPI_Simple.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponseDto<List<Flight>>>> GetAllFLights()
+        public async Task<ActionResult<ApiResponseDto<List<Flight>>>> GetAllFLights(FlightFilterOptions filterOptions)
         {
-            return Ok(await _flightService.GetAllFlights());
+            return Ok(await _flightService.GetAllFlights(filterOptions));
         }
 
         [HttpGet("{id}")]
