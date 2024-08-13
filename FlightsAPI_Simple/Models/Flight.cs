@@ -6,7 +6,7 @@ namespace FlightsAPI_Simple.Models
     {
         [Key]
         public int Id { get; set; }
-        public int FlightNumber { get; set; }
+        public string FlightNumber { get; set; } = string.Empty;
         public string AirlineName { get; set; } = string.Empty;
         public string DepartureAirportCode { get; set; } = string.Empty;
         public string ArrivalAirportCode { get; set; } = string.Empty;

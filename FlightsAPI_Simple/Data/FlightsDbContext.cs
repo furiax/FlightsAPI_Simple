@@ -16,9 +16,9 @@ namespace FlightsAPI_Simple.Data
         {
             Flights.RemoveRange(Flights);
             Flights.AddRange(
-                new Flight { FlightNumber = 101, AirlineName = "Airline A", DepartureAirportCode = "NYC", ArrivalAirportCode = "LON", DepartureDateTime = new DateTime(2024,5,24,21,40,0) , ArrivalDateTime = new DateTime(2024, 5, 25, 04, 00, 0), PassengerCapacity = 200 },
-                new Flight { FlightNumber = 202, AirlineName = "Airline B", DepartureAirportCode = "PAR", ArrivalAirportCode = "TKY", DepartureDateTime = new DateTime(2024, 5, 24, 21, 40, 0), ArrivalDateTime = new DateTime(2024, 5, 25, 04, 00, 0), PassengerCapacity = 250 },
-                new Flight { FlightNumber = 303, AirlineName = "Airline C", DepartureAirportCode = "SYD", ArrivalAirportCode = "LAX", DepartureDateTime = new DateTime(2024, 5, 24, 21, 40, 0), ArrivalDateTime = new DateTime(2024, 5, 25, 04, 00, 0), PassengerCapacity = 180 }
+                new Flight { FlightNumber = "AA-101", AirlineName = "Airline A", DepartureAirportCode = "NYC", ArrivalAirportCode = "LON", DepartureDateTime = new DateTime(2024,5,24,21,40,0) , ArrivalDateTime = new DateTime(2024, 5, 25, 04, 00, 0), PassengerCapacity = 100 },
+                new Flight { FlightNumber = "AB-202", AirlineName = "Airline B", DepartureAirportCode = "PAR", ArrivalAirportCode = "TKY", DepartureDateTime = new DateTime(2024, 5, 24, 21, 40, 0), ArrivalDateTime = new DateTime(2024, 5, 25, 04, 00, 0), PassengerCapacity = 120 },
+                new Flight { FlightNumber = "AC-303", AirlineName = "Airline C", DepartureAirportCode = "SYD", ArrivalAirportCode = "LAX", DepartureDateTime = new DateTime(2024, 5, 24, 21, 40, 0), ArrivalDateTime = new DateTime(2024, 5, 25, 04, 00, 0), PassengerCapacity = 95 }
                 );
             SaveChanges();
         }
