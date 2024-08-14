@@ -52,7 +52,7 @@ namespace FlightsAPI_Simple.Services
         public async Task<ApiResponseDto<List<Flight>>> GetAllFlights(FlightOptions flightOptions)
         {
             var query = _dbContext.Flights.AsQueryable();
-
+            var totalFlights = await query.CountAsync();
             List<Flight>? flights;
 
             if(!string.IsNullOrEmpty(flightOptions.AirlineName))
@@ -150,7 +150,6 @@ namespace FlightsAPI_Simple.Services
                 flights = await query.ToListAsync();
             }
 
-            var totalFlights = await query.CountAsync();
             bool hasPrevious = flightOptions.PageNumber > 1;
             bool hasNext = (flightOptions.PageNumber * flightOptions.PageSize) < totalFlights;
 
