@@ -51,7 +51,10 @@ namespace FlightsAPI_Simple.Services
 
         public async Task<ApiResponseDto<List<Flight>>> GetAllFlights(FlightOptions flightOptions)
         {
-            var query = _dbContext.Flights.Include(f => f.Airline).AsQueryable();
+            var query = _dbContext.Flights
+                .Include(f => f.Airline)
+                .Include(f => f.Seats)
+                .AsQueryable();
             var totalFlights = await query.CountAsync();
             List<Flight>? flights;
 
@@ -167,7 +170,10 @@ namespace FlightsAPI_Simple.Services
 
         public async Task<ApiResponseDto<Flight?>> GetFlightById(int id)
         {
-            var result = await _dbContext.Flights.Include(f => f.Airline).FirstOrDefaultAsync(f => f.Id == id);
+            var result = await _dbContext.Flights
+                .Include(f => f.Airline)
+                .Include(f => f.Seats)
+                .FirstOrDefaultAsync(f => f.Id == id);
             if (result is null)
             {
                 return new ApiResponseDto<Flight?>
