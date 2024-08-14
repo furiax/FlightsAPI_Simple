@@ -22,5 +22,11 @@ namespace FlightsAPI_Simple.Dtos
 
         [FromQuery(Name = "search")]
         public string Search { get; set; } = string.Empty;
+
+        [FromQuery(Name = "page_size")]
+        public int PageSize { get; set; } = 10;
+
+        [FromQuery(Name = "page_number")]
+        public int PageNumber { get; set; } = 1;
     }
 }
