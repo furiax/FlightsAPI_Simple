@@ -51,13 +51,13 @@ namespace FlightsAPI_Simple.Services
 
         public async Task<ApiResponseDto<List<Flight>>> GetAllFlights(FlightOptions flightOptions)
         {
-            var query = _dbContext.Flights.AsQueryable();
+            var query = _dbContext.Flights.Include(f => f.Airline).AsQueryable();
             var totalFlights = await query.CountAsync();
             List<Flight>? flights;
 
             if(!string.IsNullOrEmpty(flightOptions.AirlineName))
             {
-                query = query.Where(f => f.AirlineName == flightOptions.AirlineName);
+                query = query.Where(f => f.Airline.Name == flightOptions.AirlineName);
             }
 
             if (!string.IsNullOrEmpty(flightOptions.DepartureAirportCode))
@@ -86,8 +86,8 @@ namespace FlightsAPI_Simple.Services
                 {
                     case "airline_name": 
                         query = flightOptions.SortOrder.ToUpper() == "ASC" ? 
-                            query.OrderBy(f => f.AirlineName) :
-                            query.OrderByDescending(f => f.AirlineName); 
+                            query.OrderBy(f => f.Airline.Name) :
+                            query.OrderByDescending(f => f.Airline.Name); 
                         break;
                     case "flight_number":
                         query = flightOptions.SortOrder.ToUpper() == "ASC" ?
@@ -134,7 +134,7 @@ namespace FlightsAPI_Simple.Services
 
                 var data = await query.ToListAsync();
                 flights = data.Where(f => searchChars.All(
-                    c => f.AirlineName.ToLower().Contains(c)
+                    c => f.Airline.Name.ToLower().Contains(c)
                     || f.FlightNumber.ToLower().Contains(c)
                     || f.DepartureAirportCode.ToLower().Contains(c)
                     || f.ArrivalAirportCode.ToLower().Contains(c)
@@ -167,7 +167,7 @@ namespace FlightsAPI_Simple.Services
 
         public async Task<ApiResponseDto<Flight?>> GetFlightById(int id)
         {
-            var result = await _dbContext.Flights.FindAsync(id);
+            var result = await _dbContext.Flights.Include(f => f.Airline).FirstOrDefaultAsync(f => f.Id == id);
             if (result is null)
             {
                 return new ApiResponseDto<Flight?>
