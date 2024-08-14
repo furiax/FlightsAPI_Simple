@@ -14,5 +14,6 @@ namespace FlightsAPI_Simple.Models
         public DateTime ArrivalDateTime { get; set; }
         public int PassengerCapacity { get; set; }
         public virtual  Airline? Airline { get; set; }
+        public virtual ICollection<Seat> Seats { get; set; } = [];
     }
 }
