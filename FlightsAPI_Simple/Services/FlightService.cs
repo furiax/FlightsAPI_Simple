@@ -141,18 +141,28 @@ namespace FlightsAPI_Simple.Services
                     || f.DepartureDateTime.ToString("yyyy-MM-ddTHH:mm:ss").ToLower().Contains(c)
                     || f.ArrivalDateTime.ToString("yyyy-MM-ddTHH:mm:ss").ToLower().Contains(c)
                     || f.PassengerCapacity.ToString().ToLower().Contains(c)
-                    )).ToList();     
+                    )).ToList();
+                flights = (List<Flight>)data.Skip((flightOptions.PageNumber - 1) * flightOptions.PageSize).Take(flightOptions.PageSize);
             }
             else
-            {
+            { 
+                query = query.Skip((flightOptions.PageNumber-1) * flightOptions.PageSize).Take(flightOptions.PageSize);
                 flights = await query.ToListAsync();
             }
-            //flights = await query.ToListAsync();
+
+            var totalFlights = await query.CountAsync();
+            bool hasPrevious = flightOptions.PageNumber > 1;
+            bool hasNext = (flightOptions.PageNumber * flightOptions.PageSize) < totalFlights;
 
             return new ApiResponseDto<List<Flight>>
             {
                 Data = flights,
                 ResponseCode = HttpStatusCode.OK,
+                TotalCount = totalFlights,
+                CurrentPage = flightOptions.PageNumber,
+                PageSize = flightOptions.PageSize,
+                HasPrevious = hasPrevious,
+                HasNext = hasNext
             }; 
         }
 

@@ -13,5 +13,6 @@ namespace FlightsAPI_Simple.Dtos
         public int CurrentPage { get; set; }
         public bool HasNext { get; set; }
         public bool HasPrevious { get; set; }
+        public int PageSize { get; set; }
     }
 }
